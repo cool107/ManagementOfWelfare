@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="welfare.dao.WelfareMapper">
+
+	<!-- 직원정보 저장 -->
+	<insert id="insertEmployee" parameterType="welfare.vo.Employee">
+		insert into employee(
+		employeeId
+		, eName
+		, department
+		, position
+		, enterDate)
+		values (
+		#{employeeId}
+		, #{eName}
+		, #{department}
+		, #{position}
+		, #{enterDate}
+		)
+	</insert>
+
+	<!-- 대상자정보 저장 -->
+	<insert id="insertClient" parameterType="welfare.vo.Client">
+		insert into client
+		values (
+		#{ctId}
+		, #{ctName}
+		, #{address}
+		, #{regiDate}
+		, #{ctType}
+		, #{employeeId}
+		)
+	</insert>
+
+	<!-- 노인서비스정보 저장 -->
+	<insert id="insertAged" parameterType="welfare.vo.Aged">
+		insert into aged
+		values (
+		#{status}
+		, #{agedGrade}
+		, #{food}
+		, #{emotional}
+		, #{agedHelper}
+		, #{ctId}
+		)
+	</insert>
+	<!-- 장애인서비스정보 저장 -->
+	<insert id="insertHandicap" parameterType="welfare.vo.Handicap">
+		insert into handicap
+		values (
+		#{handiType}
+		, #{handiGrade}
+		, #{dayCare}
+		, #{handiHelper}
+		, #{ctId}
+		)
+	</insert>
+	<!-- 대상자 검색 -->
+	<select id="searchClient" parameterType="String"
+		resultType="welfare.vo.Client">
+		select ctId
+		, ctName
+		, address
+		, TO_CHAR(regiDate,'YYYY-MM-DD') as "regiDate"
+		, ctType
+		, employeeId
+		from Client where ctId=#{ctId}
+	</select>
+	<!-- 직원 검색 -->
+	<select id="searchEmployee" parameterType="String"
+		resultType="welfare.vo.Employee">
+		select * from Employee where employeeId=#{employeeId}
+	</select>
+
+	<update id="updateClient" parameterType="welfare.vo.Client">
+		update Client
+		set ctName
+		= #{ctName}, address = #{address}, regiDate =#{regiDate},
+		ctType =
+		#{ctType}, employeeId =#{employeeId}
+		where ctId = #{ctId}
+	</update>
+
+	<update id="updateEmployee" parameterType="welfare.vo.Employee">
+		update Employee
+		set
+		eName = #{eName}, department = #{department}, position = #{position},
+		enterDate =#{enterDate}
+		where employeeId = #{employeeId}
+	</update>
+
+	<update id="updateAged" parameterType="welfare.vo.Aged">
+		update Aged
+		set
+		status =
+		#{status}, agedGrade = #{agedGrade}, food =#{food},
+		emotional =#{emotional}, agedHelper =#{agedHelper}
+		where ctId = #{ctId}
+	</update>
+
+	<update id="updateHandicap" parameterType="welfare.vo.Handicap">
+		update Aged
+		set
+		handiType = #{handiType}, handiGrade = #{handiGrade}, dayCare=#{dayCare},
+		handiHelper = #{handiHelper}
+		where ctId = #{ctId}
+	</update>
+
+	<delete id="deleteClient" parameterType="String">
+		delete from Client where
+		ctId=#{ctId}
+	</delete>
+
+	<delete id="deleteEmployee" parameterType="String">
+		delete from Employee
+		where
+		employeeId=#{employeeId}
+	</delete>
+
+	<select id="listClient" resultType="welfare.vo.Client">
+		select ctId, ctName, address, TO_CHAR(regiDate,'YYYY-MM-DD') as "regiDate", ctType, employeeId
+		from Client
+	</select>
+
+	<select id="listEmployee" resultType="welfare.vo.Employee">
+		select employeeId, eName, department, position, TO_CHAR(enterDate,'YYYY-MM-DD') as "enterDate"
+		from Employee
+	</select>
+
+	<select id="listAged" resultType="welfare.vo.ShowAged">
+		select c.ctId
+			, c.ctName
+			, c.address
+			, to_char(c.regiDate, 'YYYY-MM-DD') as regiDate
+			, c.ctType
+			, c.employeeId
+			, a.status
+			, a.agedGrade
+			, a.food
+			, a.emotional
+			, a.agedHelper
+		from 
+			Client c
+			, Aged a 
+		where 
+			c.ctId = a.ctId
+	</select>
+
+	<select id="listHandicap" resultType="welfare.vo.ShowHandicap">
+		select c.ctId
+		, c.ctName
+		, c.address
+		, to_char(c.regiDate, 'YYYY-MM-DD') as regiDate
+		, c.ctType
+		, c.employeeId
+		, h.handiType
+      	, h.handiGrade
+      	, h.dayCare
+      	, h.handiHelper
+		from 
+			Client c 
+			, Handicap h 
+		where c.ctId = h.ctId
+	</select>
+</mapper>
